@@ -1,4 +1,4 @@
-#ViennaLS Example
+# ViennaLS Example
 
 This repo contains a minimal example to show how to install ViennaHRLE and ViennaLS on a bare system and then include them as dependencies in an external project.
 
