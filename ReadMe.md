@@ -21,8 +21,7 @@ cd $VIENNATOOLS_DIR
 git clone https://github.com/ViennaTools/viennals.git
 cd viennals
 mkdir build && cd build
-# need to specify full path for ViennaHRLEConfig.cmake
-cmake .. -DCMAKE_INSTALL_PREFIX=../install/ -DViennaHRLE_DIR=../viennahrle/install/ViennaHRLE/lib/cmake/ViennaHRLE/
+cmake .. -DCMAKE_INSTALL_PREFIX=../install/
 make install
 
 
@@ -31,7 +30,14 @@ cd $VIENNATOOLS_DIR
 git clone https://github.com/ViennaTools/viennals-example.git
 cd viennals-example
 mkdir build && cd build
-# do not need full path because our CMakeLists.txt fixes the paths
-cmake .. -DViennaHRLE_DIR=../viennahrle/install/ -DViennaLS_DIR=../viennaLS/install/
+cmake .. -DViennaHRLE_DIR=../viennahrle/install/ -DViennaLS_DIR=../viennals/install/
 make
 ```
+
+After the example has been built, you can run the program by:
+
+```
+./Frosty
+```
+
+This will create a level set snowman and advect it to simulate it melting.
