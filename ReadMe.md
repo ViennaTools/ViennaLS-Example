@@ -7,7 +7,7 @@ This repo contains a minimal example to show how to install ViennaHRLE and Vienn
 mkdir ViennaTools && cd ViennaTools
 export VIENNATOOLS_DIR=`pwd`
 
-# Installing ViennaHLRE
+# Installing ViennaHRLE
 cd $VIENNATOOLS_DIR
 git clone https://github.com/ViennaTools/viennahrle.git
 cd viennahrle
@@ -21,7 +21,8 @@ cd $VIENNATOOLS_DIR
 git clone https://github.com/ViennaTools/viennals.git
 cd viennals
 mkdir build && cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=../install/ -DViennaHRLE_DIR=../viennahrle/install/
+# need to specify full path for ViennaHRLEConfig.cmake
+cmake .. -DCMAKE_INSTALL_PREFIX=../install/ -DViennaHRLE_DIR=../viennahrle/install/ViennaHRLE/lib/cmake/ViennaHRLE/
 make install
 
 
@@ -30,6 +31,7 @@ cd $VIENNATOOLS_DIR
 git clone https://github.com/ViennaTools/viennals-example.git
 cd viennals-example
 mkdir build && cd build
+# do not need full path because our CMakeLists.txt fixes the paths
 cmake .. -DViennaHRLE_DIR=../viennahrle/install/ -DViennaLS_DIR=../viennaLS/install/
 make
 ```
