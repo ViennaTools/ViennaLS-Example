@@ -2,4 +2,4 @@ build*/
 *.vtk
 *.vtu
 *.vtp
-
+*.vscode

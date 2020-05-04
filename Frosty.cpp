@@ -16,7 +16,7 @@
 #include <lsVTKWriter.hpp>
 #include <lsAdvect.hpp>
 
-// implement own velocity field
+// Implement own velocity field
 class velocityField : public lsVelocityField<double> {
 public:
   double getScalarVelocity(
@@ -26,7 +26,7 @@ public:
     // (try changing it and see what happens :)
     double velocity;
     switch(material){
-      case 0: velocity = -1.8;
+      case 0: velocity = -1.8;  // -1.8 per second
       break;
       case 1: velocity = -1.3;
       break;
@@ -39,7 +39,7 @@ public:
 int main() {
 
   constexpr int D = 3;
-  omp_set_num_threads(6);
+  omp_set_num_threads(4);
 
   double gridDelta = 0.25;
 
@@ -58,7 +58,7 @@ int main() {
   radius = 5.0;
   lsMakeGeometry<double, D>(sphere3, lsSphere<double, D>(origin, radius)).apply();
 
-  // Perform a boolean operation
+  // Perform boolean operations
   lsBooleanOperation<double, D>(sphere2, sphere3, lsBooleanOperationEnum::UNION).apply();
   lsBooleanOperation<double, D>(sphere1, sphere2, lsBooleanOperationEnum::UNION).apply();
 
@@ -66,7 +66,6 @@ int main() {
   {
     lsMesh mesh1, mesh2, mesh3;
 
-    std::cout << "Extracting..." << std::endl;
     lsToSurfaceMesh<double, D>(sphere1, mesh1).apply();
     lsToSurfaceMesh<double, D>(sphere2, mesh2).apply();
     lsToSurfaceMesh<double, D>(sphere3, mesh3).apply();
@@ -76,26 +75,26 @@ int main() {
     lsVTKWriter(mesh3, "sphere3-0.vtk").apply();
   }
 
-
-  // fill vector with lsDomain pointers
-  std::vector<lsDomain_double_3 *> lsDomains;
-  lsDomains.push_back(&sphere3);
-  lsDomains.push_back(&sphere2);
-  lsDomains.push_back(&sphere1);
-
   velocityField velocities;
 
   std::cout << "Advecting" << std::endl;
-  lsAdvect<double, D> advection(lsDomains, velocities);
-  // advection.setIntegrationScheme(1);
-  advection.setCalculateNormalVectors(false);
-  advection.setAdvectionTime(1.0);
-  advection.apply();
-  double advectionSteps = advection.getNumberOfTimeSteps();
+  lsAdvect<double, D> advectionKernel;
+
+  // set velocity field
+  advectionKernel.setVelocityField(velocities);
+
+  // insert all used level sets
+  advectionKernel.insertNextLevelSet(sphere3);
+  advectionKernel.insertNextLevelSet(sphere2);
+  advectionKernel.insertNextLevelSet(sphere1);
+
+  // Advect the snowman to have 1 second pass in real time
+  advectionKernel.setAdvectionTime(1.0);
+  advectionKernel.apply();
+  double advectionSteps = advectionKernel.getNumberOfTimeSteps();
   std::cout << "Number of Advection steps taken: " << advectionSteps
             << std::endl;
 
-  std::cout << "Extracting..." << std::endl;
   {
     lsMesh mesh1, mesh2, mesh3;
 
