@@ -6,6 +6,7 @@
 #include <iostream>
 #include <array>
 
+#include <lsSmartPointer.hpp>
 #include <lsBooleanOperation.hpp>
 #include <lsDomain.hpp>
 #include <lsExpand.hpp>
@@ -43,39 +44,38 @@ int main() {
 
   double gridDelta = 0.25;
 
-  lsDomain_double_3 sphere1(gridDelta);
-  lsDomain_double_3 sphere2(gridDelta);
-  lsDomain_double_3 sphere3(gridDelta);
+  auto sphere1 = lsSmartPointer<lsDomain<double, D>>::New(gridDelta);
+  auto sphere2 = lsSmartPointer<lsDomain<double, D>>::New(gridDelta);
+  auto sphere3 = lsSmartPointer<lsDomain<double, D>>::New(gridDelta);
 
   double origin[3] = {0., 0., 0.};
   double radius = 10.0;
 
-  lsMakeGeometry<double, D>(sphere1, lsSphere<double, D>(origin, radius)).apply();
+  lsMakeGeometry<double, D>(sphere1, lsSmartPointer<lsSphere<double, D>>::New(origin, radius)).apply();
   origin[2] = 12.0;
   radius = 7.2;
-  lsMakeGeometry<double, D>(sphere2, lsSphere<double, D>(origin, radius)).apply();
+  lsMakeGeometry<double, D>(sphere2, lsSmartPointer<lsSphere<double, D>>::New(origin, radius)).apply();
   origin[2] = 20.0;
   radius = 5.0;
-  lsMakeGeometry<double, D>(sphere3, lsSphere<double, D>(origin, radius)).apply();
+  lsMakeGeometry<double, D>(sphere3, lsSmartPointer<lsSphere<double, D>>::New(origin, radius)).apply();
 
   // Perform boolean operations
   lsBooleanOperation<double, D>(sphere2, sphere3, lsBooleanOperationEnum::UNION).apply();
   lsBooleanOperation<double, D>(sphere1, sphere2, lsBooleanOperationEnum::UNION).apply();
 
-  std::cout << "Extracting..." << std::endl;
   {
-    lsMesh mesh1, mesh2, mesh3;
+    auto mesh = lsSmartPointer<lsMesh>::New();
 
-    lsToSurfaceMesh<double, D>(sphere1, mesh1).apply();
-    lsToSurfaceMesh<double, D>(sphere2, mesh2).apply();
-    lsToSurfaceMesh<double, D>(sphere3, mesh3).apply();
-
-    lsVTKWriter(mesh1, "sphere1-0.vtk").apply();
-    lsVTKWriter(mesh2, "sphere2-0.vtk").apply();
-    lsVTKWriter(mesh3, "sphere3-0.vtk").apply();
+    std::cout << "Extracting..." << std::endl;
+    lsToSurfaceMesh<double, D>(sphere1, mesh).apply();
+    lsVTKWriter(mesh, "sphere1-0.vtk").apply();
+    lsToSurfaceMesh<double, D>(sphere2, mesh).apply();
+    lsVTKWriter(mesh, "sphere2-0.vtk").apply();
+    lsToSurfaceMesh<double, D>(sphere3, mesh).apply();    
+    lsVTKWriter(mesh, "sphere3-0.vtk").apply();
   }
 
-  velocityField velocities;
+  auto velocities = lsSmartPointer<velocityField>::New();
 
   std::cout << "Advecting" << std::endl;
   lsAdvect<double, D> advectionKernel;
@@ -96,16 +96,15 @@ int main() {
             << std::endl;
 
   {
-    lsMesh mesh1, mesh2, mesh3;
+    auto mesh = lsSmartPointer<lsMesh>::New();
 
     std::cout << "Extracting..." << std::endl;
-    lsToSurfaceMesh<double, D>(sphere1, mesh1).apply();
-    lsToSurfaceMesh<double, D>(sphere2, mesh2).apply();
-    lsToSurfaceMesh<double, D>(sphere3, mesh3).apply();
-
-    lsVTKWriter(mesh1, "sphere1-1.vtk").apply();
-    lsVTKWriter(mesh2, "sphere2-1.vtk").apply();
-    lsVTKWriter(mesh3, "sphere3-1.vtk").apply();
+    lsToSurfaceMesh<double, D>(sphere1, mesh).apply();
+    lsVTKWriter(mesh, "sphere1-1.vtk").apply();
+    lsToSurfaceMesh<double, D>(sphere2, mesh).apply();
+    lsVTKWriter(mesh, "sphere2-1.vtk").apply();
+    lsToSurfaceMesh<double, D>(sphere3, mesh).apply();    
+    lsVTKWriter(mesh, "sphere3-1.vtk").apply();
   }
 
   return 0;
