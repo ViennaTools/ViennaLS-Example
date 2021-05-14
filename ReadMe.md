@@ -1,36 +1,28 @@
 # ViennaLS Example
 
-This repo contains a minimal example to show how to install ViennaHRLE and ViennaLS on a bare system and then include them as dependencies in an external project.
+This repo contains a minimal example to show how to install ViennaLS on a bare system and then include it as dependency in an external project.
 
 
 ```
 mkdir ViennaTools && cd ViennaTools
 export VIENNATOOLS_DIR=`pwd`
 
-# Installing ViennaHRLE
-cd $VIENNATOOLS_DIR
-git clone https://github.com/ViennaTools/viennahrle.git
-cd viennahrle
-mkdir build && cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=../install/
-make install
-
-
 # Installing ViennaLS
 cd $VIENNATOOLS_DIR
-git clone https://github.com/ViennaTools/viennals.git
-cd viennals
+git clone https://github.com/ViennaTools/ViennaLS.git
+cd ViennaLS
 mkdir build && cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=../install/
+make # this will install all dependencies for ViennaLS and might take while
 make install
 
 
 # Building the example
 cd $VIENNATOOLS_DIR
-git clone https://github.com/ViennaTools/viennals-example.git
-cd viennals-example
+git clone https://github.com/ViennaTools/ViennaLS-Example.git
+cd ViennaLS-Example
 mkdir build && cd build
-cmake .. -DViennaHRLE_DIR=../viennahrle/install/ -DViennaLS_DIR=../viennals/install/
+cmake .. -DViennaLS_DIR=../ViennaLS/install
 make
 ```
 
