@@ -2,27 +2,15 @@
 
 This repo contains a minimal example to show how to install ViennaLS on a bare system and then include it as dependency in an external project.
 
+## Working in C++
+
+You need a working installation of [ViennaLS](https://github.com/ViennaTools/ViennaLS#installing) to run this example. Then run the following steps to build the C++ project.
 
 ```
-mkdir ViennaTools && cd ViennaTools
-export VIENNATOOLS_DIR=`pwd`
-
-# Installing ViennaLS
-cd $VIENNATOOLS_DIR
-git clone https://github.com/ViennaTools/ViennaLS.git
-cd ViennaLS
-mkdir build && cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=../install/
-make # this will install all dependencies for ViennaLS and might take while
-make install
-
-
-# Building the example
-cd $VIENNATOOLS_DIR
 git clone https://github.com/ViennaTools/ViennaLS-Example.git
 cd ViennaLS-Example
 mkdir build && cd build
-cmake .. -DViennaLS_DIR=../ViennaLS/install
+cmake .. -DViennaLS_DIR=/path/to/your/ViennaLS/install
 make
 ```
 
@@ -33,3 +21,11 @@ After the example has been built, you can run the program by:
 ```
 
 This will create a level set snowman and advect it to simulate it melting.
+
+## Wokring in Pyhton
+
+If you a Python version of ViennaLS installed on your system, you can simply call the Python script
+```
+python3 Frosty.py
+```
+to run the example.
