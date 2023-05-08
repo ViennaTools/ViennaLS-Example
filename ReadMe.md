@@ -22,7 +22,7 @@ After the example has been built, you can run the program by:
 
 This will create a level set snowman and advect it to simulate it melting.
 
-## Wotking in Pyhton
+## Working in Python
 
 If you have a Python version of [ViennaLS](https://github.com/ViennaTools/ViennaLS/tree/master#building-the-python-package) installed on your system, you can simply call the Python script by:
 ```
