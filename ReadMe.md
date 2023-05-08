@@ -1,36 +1,16 @@
 # ViennaLS Example
 
-This repo contains a minimal example to show how to install ViennaHRLE and ViennaLS on a bare system and then include them as dependencies in an external project.
+This repo contains a minimal example to show how to install ViennaLS on a bare system and then include it as dependency in an external project.
 
+## Working in C++
+
+You need a working installation of [ViennaLS](https://github.com/ViennaTools/ViennaLS#installing) to run this example. Then run the following steps to build the C++ project.
 
 ```
-mkdir ViennaTools && cd ViennaTools
-export VIENNATOOLS_DIR=`pwd`
-
-# Installing ViennaHRLE
-cd $VIENNATOOLS_DIR
-git clone https://github.com/ViennaTools/viennahrle.git
-cd viennahrle
+git clone https://github.com/ViennaTools/ViennaLS-Example.git
+cd ViennaLS-Example
 mkdir build && cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=../install/
-make install
-
-
-# Installing ViennaLS
-cd $VIENNATOOLS_DIR
-git clone https://github.com/ViennaTools/viennals.git
-cd viennals
-mkdir build && cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=../install/
-make install
-
-
-# Building the example
-cd $VIENNATOOLS_DIR
-git clone https://github.com/ViennaTools/viennals-example.git
-cd viennals-example
-mkdir build && cd build
-cmake .. -DViennaHRLE_DIR=../viennahrle/install/ -DViennaLS_DIR=../viennals/install/
+cmake .. -DViennaLS_DIR=/path/to/your/ViennaLS/install
 make
 ```
 
@@ -41,3 +21,11 @@ After the example has been built, you can run the program by:
 ```
 
 This will create a level set snowman and advect it to simulate it melting.
+
+## Working in Python
+
+If you have a Python version of [ViennaLS](https://github.com/ViennaTools/ViennaLS/tree/master#building-the-python-package) installed on your system, you can simply call the Python script by:
+```
+python3 Frosty.py
+```
+to run the example.
