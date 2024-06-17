@@ -10,8 +10,8 @@ You need a working installation of [ViennaLS](https://github.com/ViennaTools/Vie
 git clone https://github.com/ViennaTools/ViennaLS-Example.git
 cd ViennaLS-Example
 mkdir build && cd build
-cmake .. -DViennaLS_DIR=/path/to/your/ViennaLS/install
-make
+cmake .. 
+cmake --build .
 ```
 
 After the example has been built, you can run the program by:
