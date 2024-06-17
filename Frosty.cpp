@@ -13,17 +13,17 @@
 #include <lsGeometries.hpp>
 #include <lsMakeGeometry.hpp>
 #include <lsPrune.hpp>
-#include <lsSmartPointer.hpp>
 #include <lsToSurfaceMesh.hpp>
 #include <lsVTKWriter.hpp>
 
+using namespace viennals;
+
 // Implement own velocity field
-class velocityField : public lsVelocityField<double> {
+class velocityField : public VelocityField<double> {
 public:
-  double
-  getScalarVelocity(const std::array<double, 3> & /*coordinate*/, int material,
-                    const std::array<double, 3> & /*normalVector*/,
-                    unsigned long pointID) final {
+  double getScalarVelocity(const Vec3D<double> & /*coordinate*/, int material,
+                           const Vec3D<double> & /*normalVector*/,
+                           unsigned long pointID) final {
     // Some arbitrary velocity function of your liking
     // (try changing it and see what happens :)
     double velocity;
@@ -48,51 +48,51 @@ int main() {
 
   double gridDelta = 0.25;
 
-  auto sphere1 = lsSmartPointer<lsDomain<NumericType, D>>::New(gridDelta);
-  auto sphere2 = lsSmartPointer<lsDomain<NumericType, D>>::New(gridDelta);
-  auto sphere3 = lsSmartPointer<lsDomain<NumericType, D>>::New(gridDelta);
+  auto sphere1 = SmartPointer<Domain<NumericType, D>>::New(gridDelta);
+  auto sphere2 = SmartPointer<Domain<NumericType, D>>::New(gridDelta);
+  auto sphere3 = SmartPointer<Domain<NumericType, D>>::New(gridDelta);
 
   NumericType origin[3] = {0., 0., 0.};
   NumericType radius = 10.0;
 
-  lsMakeGeometry<NumericType, D>(
-      sphere1, lsSmartPointer<lsSphere<NumericType, D>>::New(origin, radius))
+  MakeGeometry<NumericType, D>(
+      sphere1, SmartPointer<Sphere<NumericType, D>>::New(origin, radius))
       .apply();
   origin[2] = 12.0;
   radius = 7.2;
-  lsMakeGeometry<NumericType, D>(
-      sphere2, lsSmartPointer<lsSphere<NumericType, D>>::New(origin, radius))
+  MakeGeometry<NumericType, D>(
+      sphere2, SmartPointer<Sphere<NumericType, D>>::New(origin, radius))
       .apply();
   origin[2] = 20.0;
   radius = 5.0;
-  lsMakeGeometry<NumericType, D>(
-      sphere3, lsSmartPointer<lsSphere<NumericType, D>>::New(origin, radius))
+  MakeGeometry<NumericType, D>(
+      sphere3, SmartPointer<Sphere<NumericType, D>>::New(origin, radius))
       .apply();
 
   // Perform boolean operations
-  lsBooleanOperation<NumericType, D>(sphere2, sphere3,
-                                     lsBooleanOperationEnum::UNION)
+  BooleanOperation<NumericType, D>(sphere2, sphere3,
+                                   BooleanOperationEnum::UNION)
       .apply();
-  lsBooleanOperation<NumericType, D>(sphere1, sphere2,
-                                     lsBooleanOperationEnum::UNION)
+  BooleanOperation<NumericType, D>(sphere1, sphere2,
+                                   BooleanOperationEnum::UNION)
       .apply();
 
   {
-    auto mesh = lsSmartPointer<lsMesh<NumericType>>::New();
+    auto mesh = SmartPointer<Mesh<NumericType>>::New();
 
     std::cout << "Extracting..." << std::endl;
-    lsToSurfaceMesh<NumericType, D>(sphere1, mesh).apply();
-    lsVTKWriter<NumericType>(mesh, "sphere1-0.vtk").apply();
-    lsToSurfaceMesh<NumericType, D>(sphere2, mesh).apply();
-    lsVTKWriter<NumericType>(mesh, "sphere2-0.vtk").apply();
-    lsToSurfaceMesh<NumericType, D>(sphere3, mesh).apply();
-    lsVTKWriter<NumericType>(mesh, "sphere3-0.vtk").apply();
+    ToSurfaceMesh<NumericType, D>(sphere1, mesh).apply();
+    VTKWriter<NumericType>(mesh, "sphere1-0.vtk").apply();
+    ToSurfaceMesh<NumericType, D>(sphere2, mesh).apply();
+    VTKWriter<NumericType>(mesh, "sphere2-0.vtk").apply();
+    ToSurfaceMesh<NumericType, D>(sphere3, mesh).apply();
+    VTKWriter<NumericType>(mesh, "sphere3-0.vtk").apply();
   }
 
-  auto velocities = lsSmartPointer<velocityField>::New();
+  auto velocities = SmartPointer<velocityField>::New();
 
   std::cout << "Advecting" << std::endl;
-  lsAdvect<NumericType, D> advectionKernel;
+  Advect<NumericType, D> advectionKernel;
 
   // set velocity field
   advectionKernel.setVelocityField(velocities);
@@ -110,15 +110,15 @@ int main() {
             << std::endl;
 
   {
-    auto mesh = lsSmartPointer<lsMesh<NumericType>>::New();
+    auto mesh = SmartPointer<Mesh<NumericType>>::New();
 
     std::cout << "Extracting..." << std::endl;
-    lsToSurfaceMesh<NumericType, D>(sphere1, mesh).apply();
-    lsVTKWriter<NumericType>(mesh, "sphere1-1.vtk").apply();
-    lsToSurfaceMesh<NumericType, D>(sphere2, mesh).apply();
-    lsVTKWriter<NumericType>(mesh, "sphere2-1.vtk").apply();
-    lsToSurfaceMesh<NumericType, D>(sphere3, mesh).apply();
-    lsVTKWriter<NumericType>(mesh, "sphere3-1.vtk").apply();
+    ToSurfaceMesh<NumericType, D>(sphere1, mesh).apply();
+    VTKWriter<NumericType>(mesh, "sphere1-1.vtk").apply();
+    ToSurfaceMesh<NumericType, D>(sphere2, mesh).apply();
+    VTKWriter<NumericType>(mesh, "sphere2-1.vtk").apply();
+    ToSurfaceMesh<NumericType, D>(sphere3, mesh).apply();
+    VTKWriter<NumericType>(mesh, "sphere3-1.vtk").apply();
   }
 
   return 0;
