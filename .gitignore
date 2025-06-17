@@ -3,3 +3,4 @@ build*/
 *.vtu
 *.vtp
 *.vscode
+*_test.cpp

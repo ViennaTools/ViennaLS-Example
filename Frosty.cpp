@@ -16,13 +16,15 @@
 #include <lsToSurfaceMesh.hpp>
 #include <lsVTKWriter.hpp>
 
+#include <omp.h>
+
 using namespace viennals;
 
 // Implement own velocity field
 class velocityField : public VelocityField<double> {
 public:
-  double getScalarVelocity(const Vec3D<double> & /*coordinate*/, int material,
-                           const Vec3D<double> & /*normalVector*/,
+  double getScalarVelocity(const Vec3Dd & /*coordinate*/, int material,
+                           const Vec3Dd & /*normalVector*/,
                            unsigned long pointID) final {
     // Some arbitrary velocity function of your liking
     // (try changing it and see what happens :)
@@ -48,25 +50,25 @@ int main() {
 
   double gridDelta = 0.25;
 
-  auto sphere1 = SmartPointer<Domain<NumericType, D>>::New(gridDelta);
-  auto sphere2 = SmartPointer<Domain<NumericType, D>>::New(gridDelta);
-  auto sphere3 = SmartPointer<Domain<NumericType, D>>::New(gridDelta);
+  auto sphere1 = Domain<NumericType, D>::New(gridDelta);
+  auto sphere2 = Domain<NumericType, D>::New(gridDelta);
+  auto sphere3 = Domain<NumericType, D>::New(gridDelta);
 
-  NumericType origin[3] = {0., 0., 0.};
+  NumericType origin[3] = {1., 0., 0.};
   NumericType radius = 10.0;
 
-  MakeGeometry<NumericType, D>(
-      sphere1, SmartPointer<Sphere<NumericType, D>>::New(origin, radius))
+  MakeGeometry<NumericType, D>(sphere1,
+                               Sphere<NumericType, D>::New(origin, radius))
       .apply();
   origin[2] = 12.0;
   radius = 7.2;
-  MakeGeometry<NumericType, D>(
-      sphere2, SmartPointer<Sphere<NumericType, D>>::New(origin, radius))
+  MakeGeometry<NumericType, D>(sphere2,
+                               Sphere<NumericType, D>::New(origin, radius))
       .apply();
   origin[2] = 20.0;
   radius = 5.0;
-  MakeGeometry<NumericType, D>(
-      sphere3, SmartPointer<Sphere<NumericType, D>>::New(origin, radius))
+  MakeGeometry<NumericType, D>(sphere3,
+                               Sphere<NumericType, D>::New(origin, radius))
       .apply();
 
   // Perform boolean operations
@@ -78,7 +80,7 @@ int main() {
       .apply();
 
   {
-    auto mesh = SmartPointer<Mesh<NumericType>>::New();
+    auto mesh = Mesh<NumericType>::New();
 
     std::cout << "Extracting..." << std::endl;
     ToSurfaceMesh<NumericType, D>(sphere1, mesh).apply();
@@ -110,7 +112,7 @@ int main() {
             << std::endl;
 
   {
-    auto mesh = SmartPointer<Mesh<NumericType>>::New();
+    auto mesh = Mesh<NumericType>::New();
 
     std::cout << "Extracting..." << std::endl;
     ToSurfaceMesh<NumericType, D>(sphere1, mesh).apply();
